@@ -1,0 +1,1268 @@
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Rahul B | HMI Intelligence Center</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Josefin+Sans:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- HIGH-PERFORMANCE AUTOMOTIVE DESIGN SYSTEM --- */
+        :root {
+            /* Theme: DARK (Default) */
+            --bg: #030712;
+            --sidebar: #080d1a;
+            --text: #f1f5f9;
+            --text-muted: #64748b;
+            --accent: #0ea5e9;
+            --accent-glow: rgba(14, 165, 233, 0.3);
+            
+            /* Explanation Dynamic Variables */
+            --exp-color: #e2e8f0;   /* High-contrast off-white for dark mode */
+            --exp-weight: 300;      /* Sleek weight for dark mode */
+            
+            /* UI Specs */
+            --code-bg: rgba(15, 23, 42, 0.6);
+            --border: rgba(255, 255, 255, 0.05);
+            --glass: blur(20px) saturate(160%);
+            --hmi-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            --ease-hmi: cubic-bezier(0.2, 0.8, 0.2, 1);
+            --transition: all 0.5s var(--ease-hmi);
+			--font-header: 'Archivo Black', sans-serif;
+			--font-body: 'Josefin Sans', sans-serif;
+        }
+
+        [data-theme="light"] {
+            /* Theme: LIGHT */
+            --bg: #f8fafc;
+            --sidebar: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --accent-glow: rgba(14, 165, 233, 0.15);
+            --hmi-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --code-bg: rgba(255, 255, 255, 0.8);
+            --border: rgba(15, 23, 42, 0.08);
+
+            /* Explanation Dynamic Variables */
+            --exp-color: #1e293b;   /* Deep charcoal for light mode */
+            --exp-weight: 500;      /* Medium weight for readability on white */
+        }
+
+        /* --- CONTEXTUAL ACCENT ENGINE --- */
+        body.theme-git    { --accent: #f1502f; }
+		body.theme-python { --accent: #38bdf8; }
+		body.theme-adb    { --accent: #fbbf24; }
+		body.theme-capl   { --accent: #22c55e; }
+		body.theme-uds    { --accent: #e11d48; }
+		body.theme-robot  { --accent: #365314; }
+		body.theme-cluster { --accent: #a855f7; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
+        
+		button,
+		.tab-link,
+		.theme-toggle,
+		a {
+		  cursor: pointer;
+		}
+
+        html, body { 
+            height: 100vh; width: 100vw; overflow: hidden; 
+            background: var(--bg); -webkit-user-select: none;
+        }
+
+        body { 
+            font-family: var(--font-body), sans-serif;
+            color: var(--text);
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            transition: background 0.5s var(--ease-hmi);
+			--accent-glow: color-mix(in srgb, var(--accent), transparent 70%);
+			--accent-border: color-mix(in srgb, var(--accent), transparent 80%);
+        }
+
+        /* --- SIDEBAR --- */
+        nav {
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            padding: 3rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+        }
+
+        nav::after {
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0;
+            width: 1px; background: linear-gradient(transparent, var(--accent), transparent);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        .nav-header { margin-bottom: 4rem; }
+        .nav-header h1 {
+            font-family: var(--font-body); font-size: 1.6rem;
+            color: var(--accent); text-transform: uppercase;
+            letter-spacing: -1.5px; line-height: 1;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .tab-link {
+            padding: 1.1rem 1.4rem; margin-bottom: 0.8rem;
+            border-radius: 12px; font-weight: 700; font-size: 0.95rem;
+            text-transform: uppercase; color: var(--text-muted);
+            transition: var(--transition); display: flex; align-items: center; gap: 15px;
+        }
+
+        .tab-link:hover {
+            color: var(--text); background: rgba(255,255,255,0.03);
+            transform: scale(1.02) translateX(10px);
+        }
+
+        .tab-link.active {
+            background: var(--accent); color: #000;
+            box-shadow: 0 0 30px var(--accent-glow); transform: translateX(10px);
+        }
+
+        /* --- CONTENT ENGINE --- */
+        main {
+            padding: clamp(2rem, 5vw, 5rem);
+            overflow-y: auto; position: relative;
+            background: radial-gradient(circle at 80% 20%, var(--accent-glow), transparent 40%);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { 
+            display: block; 
+            animation: hmiPowerOn 0.7s var(--ease-hmi) forwards; 
+        }
+
+        @keyframes hmiPowerOn {
+            0% { opacity: 0; filter: brightness(2) blur(10px); transform: translateY(20px); }
+            100% { opacity: 1; filter: brightness(1) blur(0); transform: translateY(0); }
+        }
+
+        h2 {
+            font-family: var(--font-body); font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 1.5rem; letter-spacing: -3px; text-transform: uppercase;
+            background: linear-gradient(180deg, var(--text) 30%, var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        h3 {
+            font-family: var(--font-body); color: var(--accent);
+            text-transform: uppercase; margin-top: 3rem; margin-bottom: 1rem;
+            font-size: 1.1rem; letter-spacing: 1px;
+        }
+
+        /* --- CARDS & EXPLANATIONS --- */
+        .cmd-group { margin-bottom: 3rem; }
+
+        .cmd-row {
+            background: var(--code-bg); backdrop-filter: var(--glass);
+            border: 1px solid var(--border); border-radius: 12px;
+            padding: 1.8rem; margin-top: 1rem; transition: var(--transition);
+            box-shadow: var(--hmi-shadow); position: relative;
+			will-change: transform
+        }
+
+        .cmd-row:hover {
+            transform: translateY(-4px); border-color: var(--accent);
+            background: rgba(255,255,255,0.02);
+        }
+
+        code {
+            font-family: var(--font-body), monospace; color: var(--accent);
+            font-size: 1.15rem; font-weight: 700; display: block;
+            margin-bottom: 0.6rem; text-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        /* DYNAMIC EXPLANATION CLASS */
+        .explanation { 
+			font-family: 'Comic Sans MS', monospace; color: var(--accent);
+            font-size: 1rem; 
+            color: var(--exp-color); 
+            font-weight: var(--exp-weight); 
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+            transition: color 0.3s ease;
+        }
+
+        .tag {
+            border: 1px solid var(--accent); color: var(--accent);
+            padding: 4px 10px; border-radius: 4px; font-size: 0.65rem;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+            display: inline-block; margin-bottom: 0.5rem;
+        }
+
+        table { 
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0 10px; 
+}
+
+th { 
+    color: var(--text); 
+    opacity: 0.6; 
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+    padding: 0 1.2rem;
+}
+
+td { 
+    padding: 1.2rem; 
+    background: var(--code-bg); 
+    border-top: 1px solid var(--border); 
+    border-bottom: 1px solid var(--border);
+    /* This ensures the font color flips correctly */
+    color: var(--exp-color); 
+    font-weight: var(--exp-weight);
+    transition: var(--transition);
+	font-family: 'Josefin Sans'
+}
+
+/* Accent logic for the first column */
+td:first-child { 
+    border-left: 2px solid var(--accent); /* Thicker accent line */
+    border-radius: 12px 0 0 12px; 
+    font-family: 'Josefin Sans', monospace; color: var(--accent);
+    font-weight: 700;
+}
+
+td:last-child { 
+	font-family: 'Josefin Sans', monospace;
+    border-right: 1px solid var(--border); 
+    border-radius: 0 12px 12px 0; 
+}
+
+/* Modern Glow Hover Effect */
+tr:hover td { 
+    background: var(--accent-border); 
+    border-color: var(--accent);
+    color: var(--text); /* Pops the text on hover */
+}
+
+        /* --- THEME TOGGLE --- */
+        .theme-toggle {
+            position: fixed; bottom: 2.5rem; right: 2.5rem;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: var(--accent); color: #000;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 0 20px var(--accent-glow);
+            font-size: 1.5rem; z-index: 1000; transition: var(--transition);
+        }
+        .theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+	
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+.sev-critical td:first-child { border-left-color: #ef4444; }
+.sev-warning  td:first-child { border-left-color: #f59e0b; }
+.sev-info     td:first-child { border-left-color: #3b82f6; }
+
+
+    </style>
+</head>
+<body class="theme-git">
+
+    <nav>
+        <div class="nav-header">
+            <h1>RAHUL'S PORTAL</h1>
+            <p>Senior Engineer 1</p>
+        </div>
+        <div class="tab-link active" role="tab" aria-selected="true" onclick="openTab(event, 'git')">📁 GIT System</div>
+        <div class="tab-link" role="tab" aria-selected="false" onclick="openTab(event, 'python')">🐍 Python</div>
+        <div class="tab-link" role="tab" aria-selected="false" onclick="openTab(event, 'adb')">📱 ADB</div>
+        <div class="tab-link" role="tab" aria-selected="false" onclick="openTab(event, 'capl')">📡 CAPL & CANoe</div>
+        <div class="tab-link" role="tab" aria-selected="false" onclick="openTab(event, 'uds')">🔍 UDS</div>
+        <div class="tab-link" role="tab" aria-selected="false" onclick="openTab(event, 'robot')">🤖 Robot Framework</div>
+		<div class="tab-link" role="tab" aria-selected="false" onclick="openTab(event, 'cluster')">🖥️ Instrument Cluster</div>
+    </nav>
+
+    <main>
+        <!-- GIT SECTION -->
+        <div id="git" class="tab-content active">
+            <h2>Git Reference Manual</h2>
+    
+    <div class="cmd-group">
+        <h3 style="color: var(--accent);">Automotive Project Branch Matrix</h3>
+        <p class="explanation" style="margin-bottom: 1rem;">Standardized branch naming convention across OEM programs.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th>TATA (Skylark)</th>
+                    <th>Mahindra (W616)</th>
+                    <th>Skoda (MY25)</th>
+                    <th>MMC</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="tag">Scripts</span></td>
+                    <td>tata_skylark_scripts_master</td>
+                    <td>mah_w616_script_master</td>
+                    <td>skoda_robot_script_master</td>
+                    <td>mmc_scripts_master</td>
+                </tr>
+                <tr>
+                    <td><span class="tag">Providers</span></td>
+                    <td>tata_skylark_master</td>
+                    <td>w616_migration_code_master</td>
+                    <td>skoda_my25_master</td>
+                    <td>mmc_master</td>
+                </tr>
+                <tr>
+                    <td><span class="tag">Comms</span></td>
+                    <td>tata_skylark_com_master</td>
+                    <td>mah_w616_com_master</td>
+                    <td>skoda_com_master</td>
+                    <td>mmc_com_master</td>
+                </tr>
+                <tr>
+                    <td><span class="tag">Resources</span></td>
+                    <td>tata_skylark_res_master</td>
+                    <td>mah_w616_res_master</td>
+                    <td>skoda_res_master</td>
+                    <td>mmc_res_master</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>01. Setup & Initialization</b></h3>
+        <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="cmd-row"><code>git config --global user.name <b>"rbaskar1"</b></code><p class="explanation">Set username for commits.</p></div>
+            <div class="cmd-row"><code>git config --global user.email <b>"rbaskar1@visteon.com"</b></code><p class="explanation">Set email for commits.</p></div>
+            <div class="cmd-row"><code>git init</code><p class="explanation">Initialize local repository.</p></div>
+            <div class="cmd-row"><code>git clone [url]</code><p class="explanation">Clone remote repository.</p></div>
+        </div>
+        <div class="cmd-row"><code>git config --list</code><p class="explanation">List all current configurations and version info.</p></div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>02. File Staging & Committing</b></h3>
+        <div class="cmd-row"><code>git status</code><p class="explanation">Show working directory status.</p></div>
+        <div class="cmd-row"><code>git add [file]</code><p class="explanation">Stage specific file. Use <b>git add -A</b> for all changes.</p></div>
+        <div class="cmd-row"><code>git commit -m "message"</code><p class="explanation">Commit staged changes with message.</p></div>
+        <div class="cmd-row"><code>git rm [file]</code><p class="explanation">Remove file from tracking and directory.</p></div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>03. Branching & Switching</b></h3>
+        <div class="cmd-row"><code>git branch -a</code><p class="explanation">List all local and remote branches.</p></div>
+        <div class="cmd-row"><code>git checkout -b [name]</code><p class="explanation">Create and switch to new branch.</p></div>
+        <div class="cmd-row"><code>git checkout -</code><p class="explanation">Switch to previous branch.</p></div>
+        <div class="cmd-row"><code>git merge [branch]</code><p class="explanation">Merge specified branch into current.</p></div>
+        <div class="cmd-row"><code>git branch -d [name]</code><p class="explanation">Delete local branch safely. Use <b>-D</b> for force delete.</p></div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>04. Remote Operations & Stashing</b></h3>
+        <div class="cmd-row"><code>git remote -v</code><p class="explanation">List remote repositories.</p></div>
+        <div class="cmd-row"><code>git push -u origin [branch]</code><p class="explanation">Push and set upstream tracking.</p></div>
+        <div class="cmd-row"><code>git stash</code><p class="explanation">Temporarily save uncommitted changes.</p></div>
+        <div class="cmd-row"><code>git push origin --delete [branch]</code><p class="explanation">Delete branch from remote server.</p></div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem; margin-bottom: 5rem;">
+        <h3><b>05. History, Inspection & Reset</b></h3>
+        <div class="cmd-row"><code>git log --oneline --graph</code><p class="explanation">Visual and compact commit history.</p></div>
+        <div class="cmd-row"><code>git diff --staged</code><p class="explanation">Show staged differences.</p></div>
+        <div class="cmd-row" style="border-left: 4px solid #f1502f;">
+            <code>git reset --hard HEAD~1</code>
+            <p class="explanation"><b>DANGER:</b> Discard last commit and all local changes.</p>
+        </div>
+        <div class="cmd-row"><code>git revert [commit]</code><p class="explanation">Create a new commit that undoes a previous one.</p></div>
+    </div>
+</div>
+
+
+        <!-- PYTHON SECTION -->
+        <div id="python" class="tab-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; border-bottom: 2px solid var(--accent); padding-bottom: 1rem;">
+        <h2>PYTHON 3.X MASTER ARCHIVE</h2>
+        <div style="text-align: right;">
+            <span class="tag" style="background: var(--accent); color: #000;">Core Runtime</span>
+            <span class="tag" style="background: transparent; border: 1px solid var(--accent); color: var(--accent);">Full Specification</span>
+        </div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>01. Primitive Data Types & Type Casting</h3>
+        <p class="explanation">Python is dynamically typed but strongly typed. Understanding how to transform data safely is critical.</p>
+        <table>
+            <thead>
+                <tr><th>Category</th><th>Syntax Example</th><th>Behavior</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Numeric</td><td><code>age = 25</code> | <code>pi = 3.14159</code></td><td>int, float, complex</td></tr>
+                <tr><td>Text</td><td><code>name = "HMI_Portal"</code></td><td>str (Immutable sequence)</td></tr>
+                <tr><td>Logical</td><td><code>is_active = True</code></td><td>bool (Subclass of int: 1/0)</td></tr>
+                <tr><td>Casting</td><td><code>int("10")</code> | <code>str(45)</code> | <code>float(1)</code></td><td>Manual type conversion</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>02. String Manipulation & Slicing Matrix</h3>
+        <div class="cmd-row">
+            <code>text = "Automotive_HMI_System"</code>
+            <code>print(text[0:10])   # "Automotive"</code>
+            <code>print(text[::-1])     # "metsyS_IMH_evitomotuA" (Reverse)</code>
+            <code>print(text[::2])      # "Atmtv_MH_Sse" (Every 2nd char)</code>
+            <p class="explanation">Slicing syntax follows <code>[start : stop : step]</code>. Leaving start/stop empty defaults to the beginning/end.</p>
+        </div>
+        <div class="cmd-row">
+            <code>text.strip() | text.split('_') | text.replace('A', 'B') | text.find('HMI')</code>
+            <p class="explanation">Common Methods: <b>Strip</b> removes whitespace; <b>Split</b> returns a list; <b>Replace</b> and <b>Find</b> handle substrings.</p>
+        </div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>03. Data Structures: Collections Framework</h3>
+        
+        <div class="cmd-row">
+            <span class="tag">List</span>
+            <code>items = [1, 2, 3] | items.append(4) | items.extend([5,6]) | items.pop(0)</code>
+            <p class="explanation"><b>Lists:</b> Ordered, Mutable, allows duplicates. Best for general-purpose sequences.</p>
+        </div>
+
+        <div class="cmd-row">
+            <span class="tag">Tuple</span>
+            <code>coordinates = (1920, 1080) | x, y = coordinates (Unpacking)</code>
+            <p class="explanation"><b>Tuples:</b> Ordered, <b>Immutable</b>. Faster than lists. Used for data that shouldn't change (Constants).</p>
+        </div>
+
+        <div class="cmd-row">
+            <span class="tag">Dictionary</span>
+            <code>cfg = {"v": 1, "status": "ok"} | cfg.get("v", 0) | cfg.update({"v": 2})</code>
+            <p class="explanation"><b>Dictionaries:</b> Key-Value pairs. Use <code>.get()</code> to avoid <code>KeyError</code> crashes.</p>
+        </div>
+
+        <div class="cmd-row">
+            <span class="tag">Set</span>
+            <code>s = {1, 2, 2, 3} # Result: {1, 2, 3} | s.add(4) | s.intersection(other)</code>
+            <p class="explanation"><b>Sets:</b> Unordered, <b>Unique elements only</b>. Highly efficient for membership testing (<code>x in s</code>).</p>
+        </div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <<h3><b>04. Control Flow: Logic & Iteration</h3>
+        <div class="cmd-row">
+            <code>if cond: ... elif other_cond: ... else: ...</code>
+            <code>val = "Even" if x % 2 == 0 else "Odd" # Ternary Operator</code>
+            <p class="explanation">Python uses indentation (4 spaces) instead of curly braces to define scope.</p>
+        </div>
+        <div class="cmd-row">
+            <code>for i in range(0, 10, 2): print(i) # Loops 0, 2, 4, 6, 8</code>
+            <code>for key, val in my_dict.items(): print(f"{key}: {val}")</code>
+            <p class="explanation">The <code>range(start, stop, step)</code> function is the standard for numerical loops.</p>
+        </div>
+        <div class="cmd-row">
+            <code>while active: ... break (exit) ... continue (skip to next)</code>
+            <p class="explanation">Use <b>break</b> to terminate a loop prematurely; <b>continue</b> skips the rest of the current iteration.</p>
+        </div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>05. Advanced Logic: Comprehensions & Lambdas</h3>
+        
+        <div class="cmd-row">
+            <code>squares = [x**2 for x in range(10) if x % 2 == 0]</code>
+            <p class="explanation"><b>List Comprehension:</b> A concise way to create lists based on existing iterables and logic.</p>
+        </div>
+        <div class="cmd-row">
+            <code>f = lambda x, y: x + y | print(f(5, 10))</code>
+            <p class="explanation"><b>Lambdas:</b> One-line anonymous functions typically used with <code>map()</code> or <code>filter()</code>.</p>
+        </div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>06. Object-Oriented Programming (OOP)</span>
+        <div class="cmd-row">
+            <code>class HMI_Controller(BaseSystem):</code>
+            <code>&nbsp;&nbsp;def __init__(self, version):</code>
+            <code>&nbsp;&nbsp;&nbsp;&nbsp;super().__init__() # Initialize Parent</code>
+            <code>&nbsp;&nbsp;&nbsp;&nbsp;self.__id = version # Private variable</code>
+            <code>&nbsp;&nbsp;@property</code>
+            <code>&nbsp;&nbsp;def id(self): return self.__id</code>
+            <p class="explanation"><b>Inheritance:</b> Subclassing a parent. <b>Encapsulation:</b> Using <code>__</code> for private members. <b>Decorators:</b> <code>@property</code> for getters.</p>
+        </div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>07. Resilience: Exception Handling & File I/O</h3>
+        <div class="cmd-row">
+            <code>try: result = 10 / 0</code>
+            <code>except ZeroDivisionError as e: print(f"Error: {e}")</code>
+            <code>finally: cleanup_connection()</code>
+            <p class="explanation"><b>Exception Handling:</b> Prevents the script from crashing. <code>finally</code> runs regardless of success or failure.</p>
+        </div>
+        <div class="cmd-row">
+            <code>with open("log.txt", "w") as f: f.write("Log Entry")</code>
+            <p class="explanation"><b>Context Manager (With):</b> Automatically handles resource opening and closing (File, DB, Socket).</p>
+        </div>
+    </div>
+
+	<div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>08. Advanced: Memory Efficiency & Concurrency</h3>
+        <div class="cmd-row">
+            <code>def infinite_sequence(): i = 0; while True: yield i; i += 1</code>
+            <p class="explanation"><b>Generators:</b> Use <code>yield</code> instead of <code>return</code>. It maintains state and produces values on demand, saving RAM.</p>
+        </div>
+        <div class="cmd-row">
+            <code>async def fetch_data(): await asyncio.sleep(1); return "Done"</code>
+            <p class="explanation"><b>Asynchronous Programming:</b> Handles I/O-bound tasks concurrently without multi-threading overhead.</p>
+        </div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <span class="tag">09. The Keyword Glossary</h3>
+        <table>
+            <tr><td><code>def / class</code></td><td>Define Function / Class</td></tr>
+            <tr><td><code>import / from / as</code></td><td>Module management</td></tr>
+            <tr><td><code>global / nonlocal</code></td><td>Scope control</td></tr>
+            <tr><td><code>assert</code></td><td>Debugging/Testing checks</td></tr>
+            <tr><td><code>pass</code></td><td>Null operation placeholder</td></tr>
+            <tr><td><code>del</code></td><td>Deletes reference to an object</td></tr>
+        </table>
+    </div>
+		<div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>10. Collection Internals</h3>
+        <p class="explanation" style="margin-bottom: 1.5rem; color: #e2e8f0;">Detailed breakdown of the four primary built-in data structures.</p>
+        
+        
+            <code>LIST [ ] : The Dynamic Array</code>
+            <p class="explanation">
+                • <b>Nature:</b> Mutable, Ordered, Indexed.<br>
+                • <b>Memory:</b> Over-allocates memory to allow for $O(1)$ amortized append operations.<br>
+                • <b>Key Methods:</b> <code>.append()</code> (add to end), <code>.extend()</code> (merge iterables), <code>.insert(index, val)</code>, <code>.remove(val)</code>, <code>.sort()</code>.
+            </p>
+        </div>
+
+        <div class="cmd-row">
+            <code>TUPLE ( ) : The Constant Sequence</code>
+            <p class="explanation">
+                • <b>Nature:</b> Immutable, Ordered, Indexed.<br>
+                • <b>Performance:</b> Consumes less memory than lists and is faster to iterate.<br>
+                • <b>Use Case:</b> Protecting data integrity (e.g., storing a fixed Hardware ID or Display Resolution).<br>
+                • <b>Note:</b> A single-element tuple requires a trailing comma: <code>(val,)</code>.
+            </p>
+        </div>
+
+        <div class="cmd-row">
+            <code>SET { } : The Hash Table</code>
+            <p class="explanation">
+                • <b>Nature:</b> Mutable, Unordered, <b>Unique Elements Only</b>.<br>
+                • <b>Logic:</b> Elements must be "hashable" (immutable).<br>
+                • <b>Operations:</b> <code>.union()</code> (A | B), <code>.intersection()</code> (A & B), <code>.difference()</code> (A - B).<br>
+                • <b>Speed:</b> $O(1)$ average time complexity for membership testing (<code>x in set</code>).
+            </p>
+        </div>
+
+        <div class="cmd-row">
+            <code>DICTIONARY {K:V} : The Mapping Structure</code>
+            <p class="explanation">
+                • <b>Nature:</b> Mutable, Key-Value pairs. Since Python 3.7, preserves insertion order.<br>
+                • <b>Keys:</b> Must be immutable (strings, numbers, tuples).<br>
+                • <b>Advanced:</b> <code>.setdefault(k, d)</code> (returns value or sets default), <code>.popitem()</code> (removes last inserted item).
+            </p>
+        </div>
+ 
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>11. Object-Oriented Programming (OOP)</h3>
+        <p class="explanation" style="margin-top:10px; color: #e2e8f0;">OOP allows you to structure software as a collection of "Objects" that bundle both data (attributes) and behavior (methods).</p>
+        
+        
+
+        <div class="cmd-row">
+            <code style="color: var(--text);">Classes & Objects</code>
+            <p class="explanation">
+                • <b>Class:</b> The blueprint (e.g., a generic <code>HMI_Display</code>).<br>
+                • <b>Object:</b> The instance (e.g., <code>Main_Cluster_Display</code>).<br>
+                • <b>Constructor:</b> <code>def __init__(self)</code> initializes the object's state when created.
+            </p>
+        </div>
+
+        <div class="cmd-row">
+            <code style="color: var(--text);">The 4 Pillars of OOP</code>
+            <p class="explanation">
+                1. <b>Encapsulation:</b> Restricting direct access to data. Use <code>_</code> (protected) or <code>__</code> (private) prefixes to prevent external interference.<br>
+                2. <b>Inheritance:</b> Creating a new class from an existing one. Use <code>super()</code> to call parent methods.<br>
+                3. <b>Polymorphism:</b> One interface, many forms. Different classes can have methods with the same name (e.g., <code>.render()</code> for both Button and Slider).<br>
+                4. <b>Abstraction:</b> Hiding implementation details. Use the <code>abc</code> module to create <b>Abstract Base Classes</b> that cannot be instantiated.
+            </p>
+        </div>
+
+        <div class="cmd-row">
+            <code style="color: var(--text);">Method Types</code>
+            <p class="explanation">
+                • <b>Instance Methods:</b> Require <code>self</code>, access instance data.<br>
+                • <b>Class Methods:</b> Use <code>@classmethod</code> and <code>cls</code>; used for factory methods.<br>
+                • <b>Static Methods:</b> Use <code>@staticmethod</code>; don't access instance or class state; behave like regular functions inside a class namespace.
+            </p>
+        </div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2.5rem;">
+        <h3><b>12. Dunder / Magic Methods</h3>
+        <table>
+            <thead>
+                <tr><th>Method</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>__str__</code></td><td>Defines user-friendly string representation.</td></tr>
+                <tr><td><code>__repr__</code></td><td>Defines official string representation for debugging.</td></tr>
+                <tr><td><code>__len__</code></td><td>Allows the use of <code>len(obj)</code>.</td></tr>
+                <tr><td><code>__getitem__</code></td><td>Allows index-based access like <code>obj[i]</code>.</td></tr>
+                <tr><td><code>__call__</code></td><td>Allows the object to be called like a function: <code>obj()</code>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+        <!-- ADB SECTION -->
+        <div id="adb" class="tab-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>ADB Command Toolbox</h2>
+        <span class="tag" style="background: var(--accent); color: #000; padding: 5px 15px;">Android Debug Bridge</span>
+    </div>
+
+    <p class="explanation" style="margin-bottom: 2rem; font-size: 1.1rem;">
+        Versatile command-line tool for communicating with Android-based IVI systems, facilitating app installation, debugging, and system manipulation.
+    </p>
+
+    <div class="cmd-group" style="background: rgba(56, 189, 248, 0.05); border: 1px solid var(--accent); border-radius: 20px; padding: 1.5rem; margin-bottom: 3rem;">
+        <h3 style="margin-top: 0;">⚡ The "Big Four" Summary</h3>
+        <table>
+            <thead>
+                <tr><th>Category</th><th>Primary Tool</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Files</td><td><code>push / pull</code></td><td>Moving data between PC and Device</td></tr>
+                <tr><td>Apps</td><td><code>pm</code> (Package Manager)</td><td>Installing, clearing, or listing apps</td></tr>
+                <tr><td>System</td><td><code>am</code> (Activity Manager)</td><td>Starting apps, broadcasts, force stops</td></tr>
+                <tr><td>Display</td><td><code>wm</code> (Window Manager)</td><td>Resolution, density, and scaling</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="cmd-group">
+        <h3>01. Connection & Server Management</h3>
+        <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="cmd-row"><code>adb devices -l</code><p class="explanation">List devices with detailed info (model/product).</p></div>
+            <div class="cmd-row"><code>adb connect [ip]:[port]</code><p class="explanation">Connect via Wi-Fi/Network.</p></div>
+            <div class="cmd-row"><code>adb kill-server</code><p class="explanation">Reset ADB process (fix hanging).</p></div>
+            <div class="cmd-row"><code>adb start-server</code><p class="explanation">Manually start background process.</p></div>
+        </div>
+        <div class="cmd-row" style="background: rgba(255,255,255,0.05);">
+            <span class="tag">Multi-Device Tip</span>
+            <code>adb -s [serial_number] shell</code>
+            <p class="explanation">Target a specific device when multiple are connected.</p>
+        </div>
+    </div>
+
+    <div class="cmd-group">
+        <h3>02. File & Package Operations</h3>
+        <div class="cmd-row"><code>adb push [local] [remote]</code><p class="explanation">PC → Device (e.g., <code>adb push file.apk /sdcard/</code>)</p></div>
+        <div class="cmd-row"><code>adb pull [remote] [local]</code><p class="explanation">Device → PC</p></div>
+        <div class="cmd-row"><code>adb install -r [path_to_apk]</code><p class="explanation">Reinstall app and keep data.</p></div>
+        <div class="cmd-row"><code>adb shell pm list packages</code><p class="explanation">List all installed app package names.</p></div>
+        <div class="cmd-row"><code>adb shell pm clear [package]</code><p class="explanation">Wipe all data and cache for specific app.</p></div>
+    </div>
+
+    <div class="cmd-group">
+        <h3>03. Interaction & Display Settings</h3>
+        <div class="cmd-row"><code>adb shell am start -n [package]/[activity]</code><p class="explanation">Force open a specific app screen/activity.</p></div>
+        <div class="cmd-row"><code>adb shell input keyevent [code]</code><p class="explanation">Simulate buttons: 26=Power, 3=Home, 4=Back, 66=Enter.</p></div>
+        <div class="cmd-row"><code>adb shell input tap [x] [y]</code><p class="explanation">Simulate touch at coordinates.</p></div>
+        <div class="cmd-row"><code>adb shell wm density [value]</code><p class="explanation">Change DPI (e.g., 400). Use <b>reset</b> to revert.</p></div>
+        <div class="cmd-row"><code>adb shell uiautomator dump</code><p class="explanation">Export UI hierarchy XML (Critical for Automation).</p></div>
+    </div>
+
+    <div class="cmd-group">
+        <h3>04. Logs & Performance Debugging</h3>
+        <div class="cmd-row"><code>adb logcat *:E</code><p class="explanation">Show only Error-level logs.</p></div>
+        <div class="cmd-row"><code>adb logcat -v time</code><p class="explanation">Add timestamps to log entries.</p></div>
+        <div class="cmd-row"><code>adb bugreport</code><p class="explanation">Generate full system diagnostic ZIP.</p></div>
+        <div class="cmd-row"><code>adb shell dumpsys meminfo [package]</code><p class="explanation">Analyze RAM usage of a specific app.</p></div>
+        <div class="cmd-row"><code>adb shell dumpsys battery</code><p class="explanation">Show detailed power/charging status.</p></div>
+    </div>
+
+    <div class="cmd-group">
+        <h3>05. Advanced System & Security</h3>
+        <div class="cmd-row"><code>adb shell pm grant [package] [permission]</code><p class="explanation">Grant runtime permission (e.g., android.permission.CAMERA).</p></div>
+        <div class="cmd-row"><code>adb shell pm disable [package]</code><p class="explanation">Disable app (hides it from UI without uninstalling).</p></div>
+        <div class="cmd-row"><code>adb shell svc wifi enable/disable</code><p class="explanation">Toggle Wi-Fi state.</p></div>
+        <div class="cmd-row"><code>adb shell settings put system screen_brightness [0-255]</code><p class="explanation">Manual brightness override.</p></div>
+    </div>
+
+    <div class="cmd-group">
+        <h3>06. Disk & Memory Inspection</h3>
+        <div class="cmd-row"><code>adb shell df -h</code><p class="explanation">Show partition space usage (human-readable).</p></div>
+        <div class="cmd-row"><code>adb shell du -sh /sdcard/*</code><p class="explanation">List size of all folders in internal storage.</p></div>
+        <div class="cmd-row"><code>adb shell dumpsys procstats --hours 3</code><p class="explanation">Memory usage report for the last 3 hours.</p></div>
+    </div>
+
+    <div class="cmd-group" style="margin-bottom: 5rem;">
+        <h3>07. Fastboot Commands (Bootloader Mode)</h3>
+        <table>
+            <thead>
+                <tr><th>Command</th><th>Explanation</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>fastboot devices</code></td><td>Check for devices in bootloader mode.</td></tr>
+                <tr><td><code>fastboot oem unlock</code></td><td>Unlocks bootloader (Wipes all data).</td></tr>
+                <tr><td><code>fastboot flash recovery [img]</code></td><td>Flash new recovery image.</td></tr>
+                <tr><td><code>fastboot getvar all</code></td><td>List hardware variables (IMEI, baseband).</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+        <!-- CAPL SECTION -->
+        <div id="capl" class="tab-content">
+            <h2>CAPL Simulation</h2>
+            <div class="cmd-row">
+                <span class="tag">CAN Bus</span>
+                <code>on message Engine_Data { ... }</code>
+                <p class="explanation">Event handler to monitor real-time RPM/Speed signals in CANoe.</p>
+            </div>
+        </div>
+
+        <!-- UDS SECTION -->
+        <div id="uds" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2>Unified Diagnostic Services</h2>
+                <span class="tag" style="background: var(--accent); color: white;">ISO 14229</span>
+            </div>
+
+            <h3>01. Addressing Modes</h3>
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="cmd-row" style="border-top: 3px solid var(--accent);">
+                    
+                    <p class="explanation">1-to-1: Targeted at specific ECU (e.g., 0x712).</p>
+                </div>
+                <div class="cmd-row" style="border-top: 3px solid var(--accent);">
+                    
+                    <p class="explanation">1-to-Many: Broadcast to all ECUs (0x7DF).</p>					
+                </div>
+            </div>
+
+            <h3>02. Service ID (SID) Map</h3>
+			<div class="grid" style="grid-template-columns: 1fr 1fr;">
+            <table>
+                <thead><tr><th>SID</th><th>Service Name</th><th>Application</th></tr></thead>
+                <tbody>
+                    <tr><td>0x10</td><td>Diagnostic Session</td><td>Default/Programming/Extended</td></tr>
+                    <tr><td>0x11</td><td>ECU Reset</td><td>Hard/Soft/KeyOff reset</td></tr>
+                    <tr><td>0x22</td><td>Read Data (RDBI)</td><td>Reading VIN/SW Version</td></tr>
+                    <tr><td>0x27</td><td>Security Access</td><td>Seed-Key Handshake</td></tr>
+                    <tr><td>0x3E</td><td>Tester Present</td><td>Keep-alive signal</td></tr>
+                </tbody>
+            </table>
+
+            <h3>03. CAN Transport Protocol (TP)</h3>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                <div class="cmd-row" style="text-align: center;"><b>SF</b><br><small>Single Frame (≤7B)</small></div>
+                <div class="cmd-row" style="text-align: center;"><b>FF</b><br><small>First Frame (Start)</small></div>
+                <div class="cmd-row" style="text-align: center;"><b>FC</b><br><small>Flow Control (30 xx)</small></div>
+                <div class="cmd-row" style="text-align: center;"><b>CF</b><br><small>Consecutive (21..2F)</small></div>
+            </div>
+
+            <h3>04. Critical Timing</h3>
+            <div class="cmd-row">
+                <code>P2 Server Max / P2* Server Max</code>
+                <p class="explanation">Response timing limits. NRC 0x78 triggers P2* extension.</p>
+            </div>
+
+            <h3>05. Full NRC Reference (7F SID xx)</h3>
+            <div class="cmd-row">
+                <p class="explanation" style="font-family: 'Josefin Sans'; font-size: 1rem; height: 300px; overflow-y: scroll; background: rgba(0,0,0,0.2); padding: 10px;">
+                    • <b>0x00:</b> Positive Response<br>
+                    • <b>0x10:</b> General Reject<br>
+                    • <b>0x11:</b> Service Not Supported<br>
+                    • <b>0x12:</b> Sub-function Not Supported<br>
+                    • <b>0x13:</b> Incorrect Length / Invalid Format<br>
+                    • <b>0x21:</b> Busy Repeat Request<br>
+                    • <b>0x22:</b> Conditions Not Correct<br>
+                    • <b>0x24:</b> Request Sequence Error<br>
+                    • <b>0x31:</b> Request Out Of Range<br>
+                    • <b>0x33:</b> Security Access Denied<br>
+                    • <b>0x35:</b> Invalid Key<br>
+                    • <b>0x36:</b> Exceed Number Of Attempts<br>
+                    • <b>0x37:</b> Required Time Delay Not Expired<br>
+                    • <b>0x78:</b> Response Pending (ECU Busy)<br>
+                    • <b>0x7E:</b> Sub-function Not Supported in Active Session<br>
+                    • <b>0x81-0x8D:</b> Specific Conditions (RPM/Temp/Speed/Voltage errors)<br>
+                    • <b>0xF0-0xFE:</b> Manufacturer Specific Conditions
+                </p>
+            </div>
+        </div>
+		</div>
+
+        <!-- ROBOT SECTION -->
+        <div id="robot" class="tab-content">
+		
+		<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3rem; border-bottom: 2px solid var(--accent); padding-bottom: 1rem;">
+			<h2>Robot Framework</h2>
+			<div style="text-align: right;">
+				<span class="tag" style="background: var(--accent); color: #000;">v7.0 Core</span>
+				<span class="tag" style="background: transparent; border: 1px solid var(--accent); color: var(--accent);">Built-in Keywords</span>
+			</div>
+		</div>
+
+		<div class="cmd-group">
+			<h3>01. Key Sections (Architecture)</h3>
+			<p class="explanation">The four pillars of a .robot file. Proper indentation (2+ spaces) is mandatory between keywords and arguments.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Section</th>
+						<th>Purpose & HMI Context</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr><td>*** Settings ***</td><td>Import libraries, resources, and define Suite/Test Setups.</td></tr>
+					<tr><td>*** Variables ***</td><td>Global constants like ${URL}, @{LISTS}, and &{DICTIONARIES}.</td></tr>
+					<tr><td>*** Test Cases ***</td><td>The executable scripts representing user or system actions.</td></tr>
+					<tr><td>*** Keywords ***</td><td>Custom abstractions that turn complex code into readable English.</td></tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="cmd-group">
+			<h3>02. Settings & Environment Setup</h3>
+			<p class="explanation">Configuration module to link external dependencies and manage test lifecycles.</p>
+			
+			<div class="cmd-row">
+				<span class="tag">Imports</span>
+				<code>Library &nbsp;&nbsp;&nbsp; SeleniumLibrary | OperatingSystem | RequestsLibrary</code>
+				<code>Resource &nbsp;&nbsp; common_keywords.robot</code>
+				<code>Variables &nbsp; config.py</code>
+				<p class="explanation">Use <b>WITH NAME</b> to alias libraries if running multiple browser instances simultaneously.</p>
+			</div>
+
+			<div class="cmd-row">
+				<span class="tag">Hooks & Metadata</span>
+				<code>Suite Setup &nbsp;&nbsp;&nbsp; Open Browser To Login Page</code>
+				<code>Test Teardown &nbsp;&nbsp; Close Browser</code>
+				<code>Documentation &nbsp; High-level description of the test suite purpose.</code>
+				<code>Force Tags &nbsp;&nbsp;&nbsp;&nbsp; smoke | sprint_22</code>
+				<p class="explanation"><b>Force Tags:</b> Automatically applies these identifiers to every test case for filtered execution.</p>
+			</div>
+		</div>
+
+		<div class="cmd-group">
+			<h3>03. Logic & Control Flow</h3>
+			<p class="explanation">Native keywords used to handle dynamic system behavior and test branching.</p>
+
+			
+
+			<table>
+				<thead>
+					<tr>
+						<th>Category</th>
+						<th>Keyword</th>
+						<th>Implementation Example</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Control Flow</td>
+						<td>Run Keyword If</td>
+						<td><code>Run Keyword If '${status}' == 'PASS' Log Passed</code></td>
+					</tr>
+					<tr>
+						<td>Multi-Action</td>
+						<td>Run Keywords</td>
+						<td><code>Run Keywords Log Step 1 AND Log Step 2</code></td>
+					</tr>
+					<tr>
+						<td>Looping</td>
+						<td>Exit For Loop</td>
+						<td>Used to break out of a loop based on a specific HMI state.</td>
+					</tr>
+					<tr>
+						<td>Iteration</td>
+						<td>Continue For Loop</td>
+						<td>Skips current iteration and moves to the next.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="cmd-group">
+			<h3>04. Variables, Collections & Strings</h3>
+			<p class="explanation">Keywords for data manipulation, variable scoping, and string formatting.</p>
+			
+			<div class="cmd-row">
+				<span class="tag">Variable Scoping</span>
+				<code>Set Variable | ${local_val}</code>
+				<code>Set Global Variable | ${persistent_val}</code>
+				<code>Set Test Variable | ${case_val}</code>
+				<p class="explanation">Global variables persist across the entire run; Test variables are limited to one case.</p>
+			</div>
+
+			<div class="cmd-row">
+				<span class="tag">Collections & Logic</span>
+				<code>@{list}= Create List | one | two | three</code>
+				<code>&{dict}= Create Dictionary | key=value</code>
+				<code>${result}= Evaluate | 2 + 2</code>
+				<p class="explanation"><b>Evaluate:</b> Runs any Python expression directly within the Robot environment.</p>
+			</div>
+
+			<div class="cmd-row">
+				<span class="tag">String Manipulation</span>
+				<code>Should Be Equal | ${a} | ${b}</code>
+				<code>Should Contain | ${text} | Hello</code>
+				<code>Replace String | Hello World | World | Robot</code>
+				<code>Convert To Upper Case | ${text}</code>
+			</div>
+		</div>
+
+		<div class="cmd-group">
+			<h3>05. Logging & Timing</h3>
+			<p class="explanation">System feedback and synchronization controls for HMI automation.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Function</th>
+						<th>Keyword</th>
+						<th>Output Destination</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr><td>Standard Log</td><td>Log</td><td>Included in the HTML report.</td></tr>
+					<tr><td>Live Log</td><td>Log To Console</td><td>Printed immediately to the terminal.</td></tr>
+					<tr><td>Failure</td><td>Fail</td><td>Stops execution and marks test as RED.</td></tr>
+					<tr><td>Sync</td><td>Sleep | 2s</td><td>Static pause (Use Wait Until Element... instead).</td></tr>
+					<tr><td>DateTime</td><td>Get Current Date</td><td>Fetches system time for timestamping logs.</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<!-- INSTRUMENT CLUSTER SECTION -->
+<div id="cluster" class="tab-content">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2rem; border-bottom: 2px solid var(--accent); padding-bottom: 1rem;">
+        <h2>Instrument Cluster</h2>
+        <span class="tag" style="background: var(--accent); color: #000;">HMI Summary Mode</span>
+    </div>
+
+    <div class="cmd-group">
+        <h3>⚡ Quick Tech Summary</h3>
+        <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+            <div class="cmd-row" style="border-left: 4px solid #ef4444;">
+                <span class="tag">Critical</span>
+                <p class="explanation"><b>ABS & Airbags:</b> Core safety systems. If these telltales stay ON, the systems are disabled due to sensor/ECU faults.</p>
+            </div>
+            <div class="cmd-row" style="border-left: 4px solid #f59e0b;">
+                <span class="tag">Powertrain</span>
+                <p class="explanation"><b>Check Engine & Oil:</b> Monitors OBD codes and lubrication. Low oil pressure requires immediate engine cutoff.</p>
+            </div>
+            <div class="cmd-row" style="border-left: 4px solid #10b981;">
+                <span class="tag">Emissions</span>
+                <p class="explanation"><b>DPF/SCR/DEF:</b> Diesel particulate filtering and NOx reduction using 32.5% Urea solution.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cmd-group" style="margin-top: 2rem;">
+        <button onclick="toggleClusterData()" id="expandBtn" style="background: var(--accent); color: #000; border: none; padding: 12px 24px; border-radius: 8px; font-family: var(--font-header); cursor: pointer; transition: 0.3s; width: 100%;">
+            📂 CLICK TO VIEW ALL TECHNICAL POINTS
+        </button>
+
+        <div id="fullClusterData" style="display: none; margin-top: 2rem; animation: hmiPowerOn 0.5s ease;">
+
+<h3>Vehicle Cluster Indicators – Detailed Description</h3>
+
+<table>
+<tbody>
+
+<tr class="sev-critical">
+<td>ABS</td>
+<td>
+ABS stands for Anti-lock Braking System. It is a safety feature that prevents wheels from locking during braking, which could cause skidding or loss of control.
+ABS uses sensors on each wheel to detect lock-up and modulates braking pressure accordingly.
+The cluster displays ABS system status, warning lights for malfunctions, and confirmation when the system is active and functioning correctly.
+</td>
+</tr>
+
+<tr>
+<td>DRL</td>
+<td>
+DRL stands for Daytime Running Lights. It is a safety feature that automatically turns on exterior lights during daytime driving
+to improve vehicle visibility to other drivers, pedestrians, and cyclists.
+DRLs are less bright than night headlights to avoid glare.
+</td>
+</tr>
+
+<tr>
+<td>High Beam</td>
+<td>
+High beam, also known as main or full beam, provides maximum road illumination.
+Both headlights emit a strong, focused beam to improve visibility on dark or unlit roads.
+High beams help detect obstacles such as animals or debris and should be used only when they do not blind other road users.
+</td>
+</tr>
+
+<tr>
+<td>Battery Charge</td>
+<td>
+Indicates the battery charging status. Illuminates when the battery is not receiving sufficient charge from the alternator
+or when there is a fault in the charging system such as alternator failure or damaged cables.
+</td>
+</tr>
+
+<tr>
+<td>Low Engine Oil Pressure</td>
+<td>
+Monitors oil pressure required for lubrication and cooling of engine components.
+Low oil pressure can cause severe engine damage and requires immediate attention.
+</td>
+</tr>
+
+<tr>
+<td>Hazard</td>
+<td>
+Hazard lamps warn other road users during emergencies, breakdowns, accidents, slow-moving vehicles,
+or road hazards ahead by flashing all turn indicators simultaneously.
+</td>
+</tr>
+
+<tr>
+<td>Check Engine</td>
+<td>
+Indicates that the On-Board Diagnostic (OBD) system has detected a fault.
+The issue may range from minor problems to serious engine or emissions failures and requires diagnostic scanning.
+</td>
+</tr>
+
+<tr class="sev-critical">
+<td>Airbag</td>
+<td>
+Warns of a fault in the airbag system.
+When illuminated, one or more airbags may not deploy correctly in the event of a collision.
+</td>
+</tr>
+
+<tr>
+<td>Hill Hold</td>
+<td>
+Prevents vehicle rollback when starting on an incline by holding brake pressure for a few seconds
+after releasing the brake pedal, allowing smooth acceleration.
+</td>
+</tr>
+
+<tr>
+<td>Hill Descent</td>
+<td>
+Controls braking automatically on steep or slippery downhill roads to maintain a steady low speed,
+typically between 2–5 mph, allowing the driver to focus on steering.
+</td>
+</tr>
+
+<tr>
+<td>Immobilizer</td>
+<td>
+Security system that prevents the engine from starting unless an authorized key or transponder is detected.
+The cluster provides a visual warning if unauthorized access is attempted.
+</td>
+</tr>
+
+<tr class="sev-critical">
+<td>High Coolant Temperature</td>
+<td>
+Indicates overheating due to cooling system malfunction such as low coolant,
+radiator blockage, thermostat failure, or water pump issues.
+</td>
+</tr>
+
+<tr>
+<td>MIL</td>
+<td>
+Malfunction Indicator Lamp alerts the driver to potential emissions or engine system faults detected by OBD.
+Causes may include faulty sensors, catalytic converter issues, or loose fuel caps.
+</td>
+</tr>
+
+<tr>
+<td>Glow Plug</td>
+<td>
+Diesel engine feature that preheats air in the cylinders for cold starts.
+Activates for 5–15 seconds before ignition and turns off automatically once the engine is running.
+</td>
+</tr>
+
+<tr>
+<td>Auto Hold</td>
+<td>
+Keeps brakes applied when the vehicle is stationary, even after releasing the brake pedal.
+Automatically disengages when the accelerator is pressed, reducing driver fatigue.
+</td>
+</tr>
+
+<tr>
+<td>Paddle Shifter</td>
+<td>
+Steering-mounted electronic gear selectors allowing fast and precise gear changes
+without removing hands from the steering wheel.
+</td>
+</tr>
+
+<tr>
+<td>OAT</td>
+<td>
+Displays Outside Ambient Temperature, helping drivers anticipate weather conditions
+and adjust driving behavior, HVAC usage, and engine warm-up.
+</td>
+</tr>
+
+<tr>
+<td>G-Force</td>
+<td>
+Measures acceleration forces acting on the vehicle during braking, acceleration, and cornering.
+Used for performance monitoring and safety analysis.
+</td>
+</tr>
+
+<tr class="sev-critical">
+<td>Alternator</td>
+<td>
+Generates electrical power and charges the battery while the engine is running
+by converting mechanical energy into electrical energy.
+</td>
+</tr>
+
+<tr>
+<td>EPAS</td>
+<td>
+Electric Power-Assisted Steering uses an electric motor controlled by sensors
+to reduce steering effort and improve handling based on driving conditions.
+</td>
+</tr>
+
+<tr>
+<td>ESP</td>
+<td>
+Electronic Stability Program improves vehicle control by braking individual wheels
+and adjusting engine power to prevent skidding or loss of traction.
+</td>
+</tr>
+
+<tr>
+<td>DPF</td>
+<td>
+Diesel Particulate Filter traps soot from exhaust gases.
+Uses passive or active regeneration to burn off accumulated particles.
+</td>
+</tr>
+
+<tr>
+<td>DEF / SCR</td>
+<td>
+Diesel Exhaust Fluid is injected into the Selective Catalytic Reduction system
+to convert harmful NOx emissions into nitrogen and water vapor.
+</td>
+</tr>
+
+<tr>
+<td>Fuel Filter</td>
+<td>
+Filters contaminants from fuel before reaching the engine.
+Clogging can reduce power, cause misfires, stalling, and poor acceleration.
+</td>
+</tr>
+
+<tr>
+<td>Transmission Oil</td>
+<td>
+Lubricates, cools, and maintains hydraulic pressure in automatic transmissions.
+Low or degraded oil can cause gear wear and transmission failure.
+</td>
+</tr>
+
+<tr>
+<td>After Impact Braking</td>
+<td>
+Advanced ADAS feature that automatically applies maximum braking after a collision
+to prevent unintended secondary movement of the vehicle.
+</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+``
+    </div>
+</div>
+    </main>
+
+    <div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️</div>
+
+    <script>
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+            
+            document.body.className = 'theme-' + tabName;
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+            document.querySelector('main').scrollTop = 0;
+        }
+
+        function toggleTheme() {
+            const body = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            const isLight = body.getAttribute('data-theme') === 'light';
+            body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+            btn.innerHTML = isLight ? '🌙' : '☀️';
+        }
+    
+	function toggleClusterData() {
+    const data = document.getElementById('fullClusterData');
+    const btn = document.getElementById('expandBtn');
+    
+    if (data.style.display === 'none') {
+        data.style.display = 'block';
+        btn.innerHTML = '📂 HIDE TECHNICAL POINTS';
+        btn.style.opacity = '0.6';
+    } else {
+        data.style.display = 'none';
+        btn.innerHTML = '📂 CLICK TO VIEW ALL TECHNICAL POINTS';
+        btn.style.opacity = '1';
+    }
+}
+document.addEventListener('keydown', e => {
+    const map = {
+        '1': 'git',
+        '2': 'python',
+        '3': 'adb',
+        '4': 'capl',
+        '5': 'uds',
+        '6': 'robot',
+        '7': 'cluster'
+    };
+
+    if (map[e.key]) {
+        document.querySelector(`[onclick*="${map[e.key]}"]`)?.click();
+    }
+});
+
+document.querySelectorAll('.tab-link').forEach(l => {
+    l.classList.remove('active');
+    l.setAttribute('aria-selected', 'false');
+});
+
+evt.currentTarget.classList.add('active');
+evt.currentTarget.setAttribute('aria-selected', 'true');
+
+</script>
+</body>
+</html>
